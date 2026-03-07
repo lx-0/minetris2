@@ -1,4 +1,4 @@
-import React from 'react';
+import type { FC } from 'react';
 import { Play, RotateCcw } from 'lucide-react';
 import { GameState } from '../types';
 
@@ -9,10 +9,9 @@ interface GameControlsProps {
   gameState: GameState;
 }
 
-export const GameControls: React.FC<GameControlsProps> = ({
+export const GameControls: FC<GameControlsProps> = ({
   onStart,
   onReset,
-  isGameOver,
   gameState,
 }) => {
   return (

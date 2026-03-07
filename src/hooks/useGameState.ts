@@ -52,7 +52,7 @@ export const useGameState = () => {
   levelRef.current = level;
   gameStateRef.current = gameState;
 
-  const spawnPiece = useCallback((currentBoard: BoardType, currentMines: Set<number>) => {
+  const spawnPiece = useCallback((currentBoard: BoardType, _currentMines: Set<number>) => {
     const shape = PIECES[Math.floor(Math.random() * PIECES.length)];
     const piece: PieceType = { shape, x: Math.floor(BOARD_COLS / 2), y: 0 };
     if (checkCollision(piece, currentBoard)) {
