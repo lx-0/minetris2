@@ -7,8 +7,10 @@ on:
     branches: [main]
 
 jobs:
-  "Lint, Type Check, Build":
+  ci:
+    name: Lint, Type Check, Build
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -24,7 +26,7 @@ jobs:
         run: npm run lint
 
       - name: Type check
-        run: npx tsc -p tsconfig.app.json --noEmit
+        run: npx tsc --noEmit
 
       - name: Build
         run: npm run build
