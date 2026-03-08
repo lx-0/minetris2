@@ -6,6 +6,14 @@ export type PieceType = {
   y: number;
 };
 
+export type Difficulty = 'easy' | 'normal' | 'hard';
+
+export type DifficultyConfig = {
+  label: string;
+  mines: number;
+  scoreMultiplier: number;
+};
+
 export type HighScore = {
   points: number;
   lines: number;

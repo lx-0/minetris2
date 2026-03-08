@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { GameState, BoardType, PieceType } from '../types';
+import { GameState, BoardType, PieceType, Difficulty } from '../types';
 import {
   PIECES,
   BOARD_COLS,
@@ -9,6 +9,7 @@ import {
   clearLines,
   calcScore,
   countAdjacentMines,
+  DIFFICULTY_CONFIGS,
 } from '../utils/gameUtils';
 
 const INITIAL_DROP_INTERVAL = 800; // ms between auto-drops
@@ -37,6 +38,7 @@ export const useGameState = () => {
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(0);
   const [linesTotal, setLinesTotal] = useState(0);
+  const [difficulty, setDifficulty] = useState<Difficulty>('normal');
 
   const isGameOver = gameState === 'over';
   const isPaused = gameState === 'paused';
@@ -49,12 +51,14 @@ export const useGameState = () => {
   const minesRef = useRef(mines);
   const levelRef = useRef(level);
   const gameStateRef = useRef(gameState);
+  const difficultyRef = useRef(difficulty);
   boardRef.current = board;
   currentPieceRef.current = currentPiece;
   nextPieceShapeRef.current = nextPieceShape;
   minesRef.current = mines;
   levelRef.current = level;
   gameStateRef.current = gameState;
+  difficultyRef.current = difficulty;
 
   const spawnPiece = useCallback((currentBoard: BoardType, queuedShape?: number[][]) => {
     const shape = queuedShape ?? PIECES[Math.floor(Math.random() * PIECES.length)];
@@ -99,7 +103,8 @@ export const useGameState = () => {
       });
 
       const { newBoard: clearedBoard, linesCleared } = clearLines(newBoard);
-      const points = calcScore(linesCleared, currentLevel);
+      const multiplier = DIFFICULTY_CONFIGS[difficultyRef.current].scoreMultiplier;
+      const points = calcScore(linesCleared, currentLevel, multiplier);
       const newLinesTotal = linesTotal + linesCleared;
       const newLevel = Math.floor(newLinesTotal / 10);
 
@@ -171,9 +176,11 @@ export const useGameState = () => {
     lockPiece(dropped, board, mines, level);
   }, [currentPiece, board, mines, level, isGameOver, isPaused, lockPiece]);
 
-  const startGame = useCallback(() => {
+  const startGame = useCallback((selectedDifficulty?: Difficulty) => {
+    const diff = selectedDifficulty ?? difficulty;
+    if (selectedDifficulty) setDifficulty(selectedDifficulty);
     const newBoard = createEmptyBoard();
-    const newMines = generateMines();
+    const newMines = generateMines(DIFFICULTY_CONFIGS[diff].mines);
     setBoard(newBoard);
     setMines(newMines);
     setScore(0);
@@ -181,7 +188,7 @@ export const useGameState = () => {
     setLinesTotal(0);
     setGameState('playing');
     spawnPiece(newBoard, PIECES[Math.floor(Math.random() * PIECES.length)]);
-  }, [spawnPiece]);
+  }, [difficulty, spawnPiece]);
 
   const resetGame = useCallback(() => {
     setGameState('idle');
@@ -205,6 +212,8 @@ export const useGameState = () => {
     nextPieceShape,
     board,
     mines,
+    difficulty,
+    setDifficulty,
     movePiece,
     rotatePiece,
     dropPiece,

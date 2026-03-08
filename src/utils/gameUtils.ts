@@ -21,6 +21,14 @@ export const BOARD_COLS = 10;
 export const BOARD_ROWS = 20;
 export const MINE_COUNT = 20;
 
+import type { Difficulty, DifficultyConfig } from '../types';
+
+export const DIFFICULTY_CONFIGS: Record<Difficulty, DifficultyConfig> = {
+  easy:   { label: 'Easy',   mines: 10, scoreMultiplier: 1.0 },
+  normal: { label: 'Normal', mines: 20, scoreMultiplier: 1.5 },
+  hard:   { label: 'Hard',   mines: 35, scoreMultiplier: 2.0 },
+};
+
 export const createEmptyBoard = (): number[][] =>
   Array.from({ length: BOARD_ROWS }, () => Array(BOARD_COLS).fill(0));
 
@@ -28,10 +36,10 @@ export const createEmptyBoard = (): number[][] =>
  * Generates mine positions as a Set of linear indices (row * BOARD_COLS + col).
  * Mines are placed only in the lower 3/4 of the board to give room at the top.
  */
-export const generateMines = (): Set<number> => {
+export const generateMines = (count: number = MINE_COUNT): Set<number> => {
   const mines = new Set<number>();
   const startRow = Math.floor(BOARD_ROWS / 4);
-  while (mines.size < MINE_COUNT) {
+  while (mines.size < count) {
     const row = startRow + Math.floor(Math.random() * (BOARD_ROWS - startRow));
     const col = Math.floor(Math.random() * BOARD_COLS);
     mines.add(row * BOARD_COLS + col);
@@ -74,8 +82,8 @@ export const clearLines = (
   return { newBoard: [...emptyRows, ...remaining], linesCleared };
 };
 
-/** Standard Tetris scoring: 100/300/500/800 * (level+1). */
-export const calcScore = (lines: number, level: number): number => {
+/** Standard Tetris scoring: 100/300/500/800 * (level+1) * difficultyMultiplier. */
+export const calcScore = (lines: number, level: number, multiplier: number = 1): number => {
   const base = [0, 100, 300, 500, 800];
-  return (base[Math.min(lines, 4)] ?? 0) * (level + 1);
+  return Math.round((base[Math.min(lines, 4)] ?? 0) * (level + 1) * multiplier);
 };
