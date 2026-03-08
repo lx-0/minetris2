@@ -5,3 +5,10 @@ export type PieceType = {
   x: number;
   y: number;
 };
+
+export type HighScore = {
+  points: number;
+  lines: number;
+  level: number;
+  date: string;
+};

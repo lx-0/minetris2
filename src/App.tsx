@@ -1,8 +1,10 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { GameBoard } from './components/GameBoard';
 import { GameControls } from './components/GameControls';
 import { NextPiecePanel } from './components/NextPiecePanel';
+import { HighScoresPanel } from './components/HighScoresPanel';
 import { useGameState } from './hooks/useGameState';
+import { useHighScores } from './hooks/useHighScores';
 import { Bomb, Skull, Trophy, Layers, TrendingUp } from 'lucide-react';
 import { MINE_COUNT } from './utils/gameUtils';
 
@@ -25,6 +27,26 @@ function App() {
     resetGame,
     togglePause,
   } = useGameState();
+
+  const { highScores, sessionRank, addScore, clearSessionRank } = useHighScores();
+
+  // Save score when game ends
+  const prevIsGameOver = useRef(false);
+  useEffect(() => {
+    if (isGameOver && !prevIsGameOver.current) {
+      addScore(score, linesTotal, level);
+    }
+    prevIsGameOver.current = isGameOver;
+  }, [isGameOver, score, linesTotal, level, addScore]);
+
+  // Clear session highlight when a new game starts
+  const prevGameState = useRef(gameState);
+  useEffect(() => {
+    if (gameState === 'playing' && prevGameState.current !== 'playing') {
+      clearSessionRank();
+    }
+    prevGameState.current = gameState;
+  }, [gameState, clearSessionRank]);
 
   const handleKeyPress = useCallback(
     (event: KeyboardEvent) => {
@@ -118,6 +140,8 @@ function App() {
                 )}
               </div>
             </div>
+
+            <HighScoresPanel scores={highScores} sessionRank={sessionRank} />
 
             <GameControls
               onStart={startGame}
