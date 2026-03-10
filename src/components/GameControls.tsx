@@ -1,14 +1,15 @@
 import type { FC } from 'react';
 import { Play, RotateCcw, Pause } from 'lucide-react';
-import { GameState } from '../types';
+import { GameState, Difficulty } from '../types';
 
 interface GameControlsProps {
-  onStart: () => void;
+  onStart: (difficulty: Difficulty) => void;
   onReset: () => void;
   onTogglePause: () => void;
   isGameOver: boolean;
   isPaused: boolean;
   gameState: GameState;
+  difficulty: Difficulty;
 }
 
 export const GameControls: FC<GameControlsProps> = ({
@@ -17,12 +18,13 @@ export const GameControls: FC<GameControlsProps> = ({
   onTogglePause,
   isPaused,
   gameState,
+  difficulty,
 }) => {
   return (
     <div className="flex gap-4 flex-wrap">
       {gameState === 'idle' ? (
         <button
-          onClick={onStart}
+          onClick={() => onStart(difficulty)}
           className="flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700
             rounded-lg font-bold transition-colors"
         >

@@ -3,10 +3,11 @@ import { GameBoard } from './components/GameBoard';
 import { GameControls } from './components/GameControls';
 import { NextPiecePanel } from './components/NextPiecePanel';
 import { HighScoresPanel } from './components/HighScoresPanel';
+import { DifficultySelector } from './components/DifficultySelector';
 import { useGameState } from './hooks/useGameState';
 import { useHighScores } from './hooks/useHighScores';
-import { Bomb, Skull, Trophy, Layers, TrendingUp } from 'lucide-react';
-import { MINE_COUNT } from './utils/gameUtils';
+import { Bomb, Skull, Trophy, Layers, TrendingUp, Gauge } from 'lucide-react';
+import { DIFFICULTY_CONFIGS } from './utils/gameUtils';
 
 function App() {
   const {
@@ -20,6 +21,8 @@ function App() {
     nextPieceShape,
     board,
     mines,
+    difficulty,
+    setDifficulty,
     movePiece,
     rotatePiece,
     dropPiece,
@@ -130,7 +133,11 @@ function App() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Bomb className="text-red-400 w-4 h-4 shrink-0" />
-                  <span>Mines: <span className="font-bold">{MINE_COUNT}</span></span>
+                  <span>Mines: <span className="font-bold">{DIFFICULTY_CONFIGS[difficulty].mines}</span></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Gauge className="text-purple-400 w-4 h-4 shrink-0" />
+                  <span>Difficulty: <span className="font-bold">{DIFFICULTY_CONFIGS[difficulty].label}</span></span>
                 </div>
                 {isGameOver && (
                   <div className="flex items-center gap-2 text-red-400 mt-1">
@@ -143,6 +150,10 @@ function App() {
 
             <HighScoresPanel scores={highScores} sessionRank={sessionRank} />
 
+            {gameState === 'idle' && (
+              <DifficultySelector selected={difficulty} onChange={setDifficulty} />
+            )}
+
             <GameControls
               onStart={startGame}
               onReset={resetGame}
@@ -150,6 +161,7 @@ function App() {
               isGameOver={isGameOver}
               isPaused={isPaused}
               gameState={gameState}
+              difficulty={difficulty}
             />
 
             <div className="bg-gray-800 p-6 rounded-lg">
