@@ -35,6 +35,12 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 | `npm run preview` | Preview production build |
 | `npm run lint` | Run ESLint |
 
+## Play Online
+
+**[https://lx-0.github.io/minetris/](https://lx-0.github.io/minetris/)**
+
+Deployed automatically to GitHub Pages on every merge to `main`.
+
 ## License
 
 MIT
