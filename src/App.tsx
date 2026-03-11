@@ -4,6 +4,7 @@ import { GameControls } from './components/GameControls';
 import { NextPiecePanel } from './components/NextPiecePanel';
 import { HighScoresPanel } from './components/HighScoresPanel';
 import { DifficultySelector } from './components/DifficultySelector';
+import { TouchControls } from './components/TouchControls';
 import { useGameState } from './hooks/useGameState';
 import { useHighScores } from './hooks/useHighScores';
 import { Bomb, Skull, Trophy, Layers, TrendingUp, Gauge } from 'lucide-react';
@@ -99,18 +100,28 @@ function App() {
         </div>
 
         <div className="flex flex-col md:flex-row gap-8 justify-center items-start">
-          <div className="bg-gray-800 p-6 rounded-lg shadow-xl relative">
-            <GameBoard
-              board={board}
-              currentPiece={currentPiece}
-              mines={mines}
-              gameState={gameState}
+          <div className="flex flex-col items-center">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-xl relative">
+              <GameBoard
+                board={board}
+                currentPiece={currentPiece}
+                mines={mines}
+                gameState={gameState}
+              />
+              {isPaused && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-lg backdrop-blur-sm bg-gray-900/70">
+                  <span className="text-3xl font-bold text-purple-400 tracking-widest">PAUSED</span>
+                </div>
+              )}
+            </div>
+            <TouchControls
+              onMoveLeft={() => movePiece('left')}
+              onMoveRight={() => movePiece('right')}
+              onRotate={rotatePiece}
+              onSoftDrop={() => movePiece('down')}
+              onHardDrop={dropPiece}
+              disabled={isGameOver || isPaused || gameState !== 'playing'}
             />
-            {isPaused && (
-              <div className="absolute inset-0 flex items-center justify-center rounded-lg backdrop-blur-sm bg-gray-900/70">
-                <span className="text-3xl font-bold text-purple-400 tracking-widest">PAUSED</span>
-              </div>
-            )}
           </div>
 
           <div className="flex flex-col gap-6 min-w-48">
@@ -164,7 +175,7 @@ function App() {
               difficulty={difficulty}
             />
 
-            <div className="bg-gray-800 p-6 rounded-lg">
+            <div className="hidden md:block bg-gray-800 p-6 rounded-lg">
               <h2 className="text-xl font-bold mb-3 text-purple-400">Controls</h2>
               <ul className="text-sm space-y-1 text-gray-300">
                 <li><kbd className="bg-gray-700 px-1 rounded">← →</kbd> Move</li>
