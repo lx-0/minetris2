@@ -5,9 +5,10 @@ import { NextPiecePanel } from './components/NextPiecePanel';
 import { HighScoresPanel } from './components/HighScoresPanel';
 import { DifficultySelector } from './components/DifficultySelector';
 import { TouchControls } from './components/TouchControls';
+import { GameOverScreen } from './components/GameOverScreen';
 import { useGameState } from './hooks/useGameState';
 import { useHighScores } from './hooks/useHighScores';
-import { Bomb, Skull, Trophy, Layers, TrendingUp, Gauge } from 'lucide-react';
+import { Bomb, Trophy, Layers, TrendingUp, Gauge } from 'lucide-react';
 import { DIFFICULTY_CONFIGS } from './utils/gameUtils';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
     linesTotal,
     isGameOver,
     isPaused,
+    gameOverReason,
     currentPiece,
     ghostPiece,
     nextPieceShape,
@@ -115,6 +117,18 @@ function App() {
                   <span className="text-3xl font-bold text-purple-400 tracking-widest">PAUSED</span>
                 </div>
               )}
+              {isGameOver && (
+                <GameOverScreen
+                  score={score}
+                  lines={linesTotal}
+                  level={level}
+                  gameOverReason={gameOverReason}
+                  isNewBest={sessionRank === 0}
+                  difficulty={difficulty}
+                  onPlayAgain={() => startGame()}
+                  onChangeDifficulty={resetGame}
+                />
+              )}
             </div>
             <TouchControls
               onMoveLeft={() => movePiece('left')}
@@ -152,12 +166,6 @@ function App() {
                   <Gauge className="text-purple-400 w-4 h-4 shrink-0" />
                   <span>Difficulty: <span className="font-bold">{DIFFICULTY_CONFIGS[difficulty].label}</span></span>
                 </div>
-                {isGameOver && (
-                  <div className="flex items-center gap-2 text-red-400 mt-1">
-                    <Skull className="w-4 h-4 shrink-0" />
-                    <span className="font-bold">Game Over!</span>
-                  </div>
-                )}
               </div>
             </div>
 

@@ -39,6 +39,7 @@ export const useGameState = () => {
   const [level, setLevel] = useState(0);
   const [linesTotal, setLinesTotal] = useState(0);
   const [difficulty, setDifficulty] = useState<Difficulty>('normal');
+  const [gameOverReason, setGameOverReason] = useState<'mine' | 'board_full' | null>(null);
 
   const isGameOver = gameState === 'over';
   const isPaused = gameState === 'paused';
@@ -66,6 +67,7 @@ export const useGameState = () => {
     const piece: PieceType = { shape, x: Math.floor(BOARD_COLS / 2), y: 0 };
     if (checkCollision(piece, currentBoard)) {
       // Can't spawn — board is full, game over
+      setGameOverReason('board_full');
       setGameState('over');
     } else {
       setCurrentPiece(piece);
@@ -86,6 +88,7 @@ export const useGameState = () => {
       });
 
       if (hitMine) {
+        setGameOverReason('mine');
         setGameState('over');
         return;
       }
@@ -186,6 +189,7 @@ export const useGameState = () => {
     setScore(0);
     setLevel(0);
     setLinesTotal(0);
+    setGameOverReason(null);
     setGameState('playing');
     spawnPiece(newBoard, PIECES[Math.floor(Math.random() * PIECES.length)]);
   }, [difficulty, spawnPiece]);
@@ -199,6 +203,7 @@ export const useGameState = () => {
     setScore(0);
     setLevel(0);
     setLinesTotal(0);
+    setGameOverReason(null);
   }, []);
 
   const ghostPiece: PieceType | null = (() => {
@@ -217,6 +222,7 @@ export const useGameState = () => {
     linesTotal,
     isGameOver,
     isPaused,
+    gameOverReason,
     currentPiece,
     ghostPiece,
     nextPieceShape,
