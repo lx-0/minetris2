@@ -19,6 +19,7 @@ function App() {
     isGameOver,
     isPaused,
     currentPiece,
+    ghostPiece,
     nextPieceShape,
     board,
     mines,
@@ -105,6 +106,7 @@ function App() {
               <GameBoard
                 board={board}
                 currentPiece={currentPiece}
+                ghostPiece={ghostPiece}
                 mines={mines}
                 gameState={gameState}
               />

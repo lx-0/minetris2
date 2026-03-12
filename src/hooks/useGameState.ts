@@ -201,6 +201,15 @@ export const useGameState = () => {
     setLinesTotal(0);
   }, []);
 
+  const ghostPiece: PieceType | null = (() => {
+    if (!currentPiece || !isPlaying) return null;
+    let ghost = { ...currentPiece };
+    while (!checkCollision({ ...ghost, y: ghost.y + 1 }, board)) {
+      ghost = { ...ghost, y: ghost.y + 1 };
+    }
+    return ghost.y === currentPiece.y ? null : ghost;
+  })();
+
   return {
     gameState,
     score,
@@ -209,6 +218,7 @@ export const useGameState = () => {
     isGameOver,
     isPaused,
     currentPiece,
+    ghostPiece,
     nextPieceShape,
     board,
     mines,

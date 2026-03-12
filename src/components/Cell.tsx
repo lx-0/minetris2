@@ -22,21 +22,28 @@ const MINE_COUNT_COLORS: Record<number, string> = {
 interface CellProps {
   value: number;
   isActive: boolean;
+  isGhost: boolean;
   isMine: boolean;
   isRevealed: boolean;
 }
 
-export const Cell: React.FC<CellProps> = ({ value, isActive, isMine, isRevealed }) => {
+export const Cell: React.FC<CellProps> = ({ value, isActive, isGhost, isMine, isRevealed }) => {
   const getBgColor = () => {
     if (isActive) return 'bg-purple-500';
+    if (isGhost) return 'bg-gray-800';
     if (isRevealed && isMine) return 'bg-red-600';
     if (value === 0) return 'bg-gray-800';
     return 'bg-purple-800';
   };
 
+  const getBorderStyle = () => {
+    if (isGhost) return 'border border-purple-500 opacity-40';
+    return '';
+  };
+
   const getContent = () => {
     if (isRevealed && isMine) return <Bomb className="w-4 h-4 text-white" />;
-    if (isActive) return null;
+    if (isActive || isGhost) return null;
     // value 1-8: show adjacency number
     if (value >= 1 && value <= 8) {
       const colorClass = MINE_COUNT_COLORS[value] ?? 'text-white';
@@ -48,7 +55,7 @@ export const Cell: React.FC<CellProps> = ({ value, isActive, isMine, isRevealed 
 
   return (
     <div
-      className={`w-8 h-8 flex items-center justify-center ${getBgColor()} transition-colors duration-75`}
+      className={`w-8 h-8 flex items-center justify-center ${getBgColor()} ${getBorderStyle()} transition-colors duration-75`}
     >
       {getContent()}
     </div>

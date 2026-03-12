@@ -6,6 +6,7 @@ import { BOARD_COLS } from '../utils/gameUtils';
 interface GameBoardProps {
   board: BoardType;
   currentPiece: PieceType | null;
+  ghostPiece: PieceType | null;
   mines: Set<number>;
   gameState: GameState;
 }
@@ -13,6 +14,7 @@ interface GameBoardProps {
 export const GameBoard: React.FC<GameBoardProps> = ({
   board,
   currentPiece,
+  ghostPiece,
   mines,
   gameState,
 }) => {
@@ -25,11 +27,15 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           const isActive = !!currentPiece?.shape.some(
             ([dx, dy]) => x === currentPiece.x + dx && y === currentPiece.y + dy
           );
+          const isGhost = !isActive && !!ghostPiece?.shape.some(
+            ([dx, dy]) => x === ghostPiece.x + dx && y === ghostPiece.y + dy
+          );
           return (
             <Cell
               key={`${x}-${y}`}
               value={cell}
               isActive={isActive}
+              isGhost={isGhost}
               isMine={mines.has(y * BOARD_COLS + x)}
               isRevealed={isOver}
             />
